@@ -78,8 +78,8 @@ def update_greeting():
 	# Generate OpenAI response
         openai_response = openai.Completion.create(
             engine="text-davinci-003",
-            prompt=f"tell me a greeting, it is currently {current_time} o'clock",
-            max_tokens=100,
+            prompt=f"tell me a greeting, it is currently {current_time} o'clock, be a bit lighthearted and playful",
+            max_tokens=140,
             temperature=0.5,
         )
 	# Format and display greeting
