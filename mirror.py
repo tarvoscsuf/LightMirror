@@ -2,6 +2,7 @@ import tkinter as tk
 import time
 import requests
 import json
+import openai
 
 # Backdrop, main window
 window = tk.Tk()
@@ -16,17 +17,22 @@ time_label.pack(expand=True)
 weather_label = tk.Label(window, font=('Tahoma', 48), fg='white', bg='black')
 weather_label.pack(expand=True)
 
+# Greetings label
+greetings_label = tk.Label(window, font=('Tahoma', 36), fg='white', bg='black')
+greetings_label.pack(side=tk.TOP)  # Changed side parameter
+
 # RSS feed label
 news_label = tk.Label(window, font=('Tahoma', 36), fg='white', bg='black')
 news_label.pack(side=tk.BOTTOM, pady=40)
 
 # New York Times RSS API URL
-rss_url = ""
+rss_url = "KEY"
 
-# OpenWeatherMap AP
-API_KEY = ""
+# OpenWeatherMap API
+weather_key = "KEY"
 
-
+# OpenAI Token
+openai.api_key = "KEY"
 
 # Time updater
 def update_time():
@@ -37,21 +43,16 @@ def update_time():
     # Schedule the next time update after 1 second (1000 milliseconds)
     window.after(1000, update_time)
 
-
-
-
-
-
 # Weather updater
 def update_weather():
     try:
         # Get the local weather from OpenWeatherMap API
         # Enter your city name and country code below
-        city = "City"
-        country_code = ""
+        city = "CITY"
+        country_code = "US"
 
         # Send a request to OpenWeatherMap API with units=imperial for Fahrenheit
-        url = f"http://api.openweathermap.org/data/2.5/weather?q={city},{country_code}&appid={API_KEY}&units=imperial"
+        url = f"http://api.openweathermap.org/data/2.5/weather?q={city},{country_code}&appid={weather_key}&units=imperial"
         response = requests.get(url)
         data = json.loads(response.text)
 
@@ -69,7 +70,27 @@ def update_weather():
     # Schedule the next weather update after 30 minutes (1800000 milliseconds)
     window.after(1800000, update_weather)
 
+# Greetings updater
+def update_greeting():
+    try:
+        # Get the current time
+        current_time = time.strftime('%H:%M:%S')
+	# Generate OpenAI response
+        openai_response = openai.Completion.create(
+            engine="text-davinci-003",
+            prompt=f"tell me a greeting, it is currently {current_time} o'clock",
+            max_tokens=100,
+            temperature=0.5,
+        )
+	# Format and display greeting
+        greeting_text = openai_response.choices[0].text.strip()
+        greetings_label.config(text=greeting_text)
+    except Exception as e:
+        print("Error:", str(e))
+        greetings_label.config(text="Failed to generate greeting.")
 
+    # Schedule the next greetings update after 30 seconds (30000 milliseconds)
+    window.after(30000, update_greeting)
 
 # RSS updater
 def update_news():
@@ -101,10 +122,10 @@ def update_news():
     # Schedule the next news update after 30 seconds (30000 milliseconds)
     window.after(30000, update_news)
 
-
 # Function calls
 update_time()
 update_weather()
+update_greeting()
 update_news()
 
 # Main
