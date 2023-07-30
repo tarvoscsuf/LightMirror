@@ -1,0 +1,2 @@
+# LightMirror
+LightMirror was inspired by MichMich's MagicMirror, only to be much lighter while retaining the most basic functionality. LM currently uses openweather API for weather, New York Times RSS feed for news, and OpenAI's Davinci 3 for a simple greeting. Feel free to use LM in your own projects, all you need to do is configure each key at the top of mirror.py with your own (or use os.environ) and update the update_weather() function with your personal information.
